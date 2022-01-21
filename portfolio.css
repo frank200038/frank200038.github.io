@@ -1,0 +1,183 @@
+body{
+    background-image: url(img/milky-way-starry-sky-night-sky-star-956999.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+header{
+    margin-top:80px;
+}
+ul{
+    list-style-type: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+nav{
+    margin-left:30px;
+    width:50vw;
+    border-radius: 10px;
+    background-color: #d4af37;
+    font-size: 17px;
+    background-repeat: no-repeat;
+    background-size: 6%;
+    background-position: right;
+}
+
+nav a{
+    color:white !important;
+    font-weight: 500;
+    font-size: 20px;
+    margin-left: 70px;
+    
+}
+.active{
+    color:black !important;
+}
+
+.navbar-button>a{
+    background-color: rgb(0,85,102);
+    padding:20px 15px 20px 20px;
+    border-radius: 20%;
+    margin-right:45px;
+    cursor: pointer;
+}
+.navbar-button>a:hover{
+    background-color: rgb(172, 126, 0);
+    box-shadow:0px 0px 20px rgb(255, 187, 0);
+}
+
+.card-container{
+    margin-top:40px;
+}
+
+.card-1{
+    width:280px;
+    height:700px;
+    /* background: url(img/twitter-icon.png) no-repeat; */
+    background-size: contain;
+    background-position: 5px 10px;
+}
+.card-2{
+    width:60vw;
+    margin-left:70px;
+    
+    
+}
+
+.card-1,.card-2{
+    border: black solid;
+    border-width: 1px;
+    box-shadow: 10px 3px 5px #9999993b;
+    border-radius: 10px;
+    background-color: white;
+}
+
+
+
+.personal-info>ul{
+  margin-left: -50px; 
+  list-style-type: none;
+  margin-top: 20px;  
+}
+.personal-info li{
+    margin-bottom:10px;
+    padding-left:10px;
+    
+}
+
+
+.cv-section-title{
+    display: inline-block;
+    background-color:rgb(0,85,102);
+    color: white;
+    margin-left:45%;
+    font-weight: 600;
+    padding:10px 10px 10px 10px;
+    border-radius: 5px;
+    box-shadow: 4px 4px #d4af37;
+}
+
+.nav-item:before{
+    content:""
+}
+.nav-link{
+    color:gold;
+}
+.nav-link:hover{
+    color: #a78000
+}
+
+
+.row{
+    margin-top:30px;
+
+}
+.row h5{
+    text-align: center;
+    margin-top:35px;
+}
+.row img{
+    width:50%;
+    margin-left:25%
+}
+
+.scroll-container{
+    margin-top:20px;
+    
+    border-radius: 5px;
+    background-color: black;
+    display: inline-block;
+    float: none;
+}
+
+.scroll-content{
+    overflow: auto;
+    margin-left:10px;
+    margin-right:1px;
+    margin-bottom:20px;
+}
+
+.bigEvent-card{
+    margin-left:20px;
+    margin-right:20px;
+    height:970px;
+}
+.bigEvent-card>img{
+    margin-left:0;
+    width: 100%;
+}
+.bigEvent-card-body{
+    width:700px !important;
+}
+.bigEvent-card-body li{
+    margin-left:-30px;
+    font-size: 20px;
+}
+.card-text{
+    font-size: 20px;
+    margin-top:10px !important;
+    width:100%;
+}
+
+.btn-primary{
+    border-color: #d4af37;
+    background-color: #d4af37;
+    margin-bottom: 5%;
+}
+.btn-primary:hover{
+    border-color:rgb(0,85,102);
+    background-color:rgb(0,85,102);
+}
+
+footer{
+    background-color: #a78000;
+    margin-top:5%;
+    padding-top:20px;
+    padding-bottom:20px;
+}
+footer>div{
+    color:white;
+    text-align: center;
+}
