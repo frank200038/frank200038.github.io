@@ -148,9 +148,9 @@ nav a{
     margin-left:0;
     width: 100%;
 }
-.bigEvent-card-body{
+/* .bigEvent-card-body{
     width:700px !important;
-}
+} */
 .bigEvent-card-body li{
     margin-left:-30px;
     font-size: 20px;
