@@ -1,0 +1,82 @@
+{
+    "PersonalInfo":{
+        "Name" : "Harry James Potter",
+        "Alias": "Le garçon qui a vécu",
+        "Age" : "40",
+        "Gender":"Male",
+        "DOB" : "1980-07-31",
+        "Address" : "Potter Cottage, Godric's Hollow, West Country, England",
+        "PostalCode": "BS37 4AP",
+        "Email": "hpotter@gmail.com" 
+    },
+    "Education":{
+        "University" : {
+            "Name" : "L'école de sorcellerie de Poudlard",
+            "Motto" : "Draco dormiens nunquam titillandus",
+            "Location" : "Scotland",
+            "Degree" : "L'assistant",
+            "Duration" : "1991-1997",
+            "Content":"Depuis son entrée à Poudlard, il a été un chercheur de Gryffondor dans tous les matchs de Quidditch, et a pu rattraper le Vif d'or et gagner le jeu à chaque fois. Comme son père, il a reçu le titre de meilleur chercheur pour sa performance exceptionnelle. Lorsqu'il était en première année, il a pu piloter le balai avec une seule tentative en classe de vol et a obtenu des résultats excellents. En deuxième année, Harry a trouvé les trois chiens de l'enfer de Hagrid dans une pièce. Il a expliqué l'origine des trois chiens de l'enfer et a aidé Hagrid à éviter la punition. En quatrième année, dans la classe de défense des forces du mal, il a mis en évidence ses capacités et a obtenu une bonne note de O. En cinquième année, il a passé 5 N.E.W.T. examens et a obtenu de très bons résultats avec succès pour servir en tant qu'Auror.",
+            "Image":"https://i.pinimg.com/474x/6c/4c/08/6c4c08a1c9cd415b2223666fe133d08b--cross-stitch-patterns-cross-stitches.jpg"
+        },
+        "Primary":{
+            "Name" : "St. Grogory's Primary School",
+            "Motto" : "Sciencia es via",
+            "Location" : "Little Whinging, Surry, England, UK",
+            "Degree" : "British Diploma in Primary Education",
+            "Duration" : "1986-1991",
+            "Content": "Harry Potter a fréquenté l'école primaire St. Grogory de 1986 à 1991. Il était un excellent élève. Au cours de son passage dans cette école primaire, il a obtenu divers prix comme celui de lauréat régional de la foire scientifique de 1990. Il avait obtenu le score le plus élevé de sa classe d'anglais pendant 3 années consécutives. Ses professeurs ont également eu de nombreux compliments, en particulier son professeur d'anglais Mme Denbi. Mme Denbi a décrit Harry Potter comme un 'jeune homme jeune et passionné qui a un grand potentiel pour réaliser ce que les autres ne peuvent pas.'. Harry a récompensé l'école primaire avec un prix du directeur, 'Meilleur élève de l'année'",
+            "Image":"https://www.bluebox-i.co.uk/wp-content/themes/bluebox/inc/img/gregorys.png"
+        }
+    },
+    "Experience":{
+        "First" : {
+            "Job" : "Auror",
+            "Place" : "Le ministre de magic",
+            "Duration" : "2007 - 2016",
+            "Description":{
+                "1" : "Le plus jeune Auror de l'histoire, il a été Auror de 1998 à 2007",
+                "2" : "En 2007, il est devenu chef du bureau des Aurors, où il a supervisé le département et géré des bureaux dans quatre régions différentes",
+                "3" : "Responsable d'enquêter sur les crimes impliquant la magie noire et d'arrêter ou de détenir des sorciers noirs"
+            }       
+        },
+        "Second" : {
+            "Job" : "Le ministre de justice",
+            "Place" : "Ministère de magic",
+            "Duration": "2017 - Présent",
+            "Description":{
+                "1" : "Il est responsable de rédiger le grand plan de magiciens chaque année",
+                "2" : "Il a ajouté certains lois pour que les magiciens puissent co-habiter avec ceux qui n'ont pas de magie",
+                "3" : "Gère le bureau des Aurors, le mauvais usage du bureau de la Magie, le mauvais usage du bureau des objets moldus, etc."
+            }
+        }
+    },
+    "Abilities":{
+        "1": {
+            "Title":"Defense Ability",
+            "Content":"Doué en se défendant contre les forces du mal",
+            "Image": "https://img.icons8.com/dotty/80/000000/knight-shield.png"
+        },
+        "2": {
+            "Title":"Communication",
+            "Content":"Excellente compréhension et communication avec les serpents",
+            "Image":"https://img.icons8.com/dotty/80/000000/year-of-snake.png"
+        },
+        "3":{
+            "Title":"Predicton",
+            "Content":"Capable de prévoir ce que Voldemort fera ensuite",
+            "Image":"https://img.icons8.com/dotty/80/000000/crystal-ball.png"
+        }, 
+        "4": {
+            "Title":"Quidditch",
+            "Content":"Maitriser le contrôle le vol de Quidditch",
+            "Image":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAABmJLR0QA/wD/AP+gvaeTAAAE90lEQVR4nO2aTWhdVRDHf2ljmzRWKpjWaBVETdIWKioISqoIurIu1FRJsWlAXYiCqKAbJSAV6qJaV6Ji2ipVEKV+rSqoSF2IRNti+hHB+v1RgzbGJmlM8lzMe3rz3pybe9+b+/Hs+cFs0nPnP29655wz51zweDwej8fj8Xg8Ho/H44nBwqwDyClNwDZgBXAg41jqjg4kaQVgArgs23DqizuBMSR5JRsClmQZVD3QBDzL3MQFbSC70PJPsGQ1mwAeyCy6nLOJypIN2hFgbWbR5Zj5SrYAvAycmVWAecaXbA34kq0SX7I10Ikv2arpBf7CnbzD+JJViVqyLVkFmGc6gYP4kv2XBTHG9hFeskPAGusA88xKYB+y/QijGXgeX7JzuAH4BfnxY8Aqx7j5Snac07BktwKzzE3EQSqPlfqAk4SX7OpUos4Zu9ETsqP47y3ATseY4NjEz/EakxaIQANwIdBetA7gAsfYPuBbYAPuN+skcB+wyzZMnYY0RIosQ5JTslLCLkUWAQuGgNuBQ0b+MqUF6EbehK8ILzcLG+B/cvS+EtgOnCD5pBWQfV9vKr8sYZqAJ5Ftg1VyZoBj/LedKbdjZLzKWi0iVyArZ2eVz/8BDANHizYcsEmke/iUyo3wcuJ1Krmkm/C9WMlmkdOPPcBTwF1AF9AaUedzh99D1PE5Xi8wjTtpk8jk3g2cU4PO2hCNAvBKDb4z42ZkjnIl7mngPCOtZxw6QbvbSCsVVgGj6D9kGLjcUGsRcNyhVbKfgOsMNRNlCfAl+g95D1hqrHerohOcNt5HFpO6YQd68j7GrqMI8q6i9RrwHNBPna3Cm9GTN4S0ata0AX8rejcmoJU47cCfRN8Efw9cUqPmIw6/dfddYzOwn3STB7LHK/f9hIHf1HHNe0km72rF9yxwsYHvVOkh/eQBvKD4/9DId2rEmfcsk9eM9MflGnV/6rILPXk/YJc8kE9tyzVGiXer1ghsBN5ATrEngRFgENhiHG8kNqIn73fsj5Q+UHRejPF8F3JwEVYxU8i55WKzqEO4CL11mwCuNdZaTeWNXAG4JuLzPcAp5XmX7cO+e6rgLYd4TwJaA4rO4YjPdhEveSV7mwTvh653iO5OQKsDPQH3Rni2kfnLNsySeBlYAHyhiP0InJ2A1ieK1nGi9diuOXoQWIfMdW1I/zyljIv6lsdivSOo2xLQ6ndoPRbx+TeVZweR47ByNji0zD882usIynq+uAd94TiCXFZF4Rvl+XUh47WVfnMVsTtxrYY3WYoAD6JfC8wQfeUF2RGU+wjbomxVxj8aM/ZQNIH9hv7PIrzHjntoMKL4aAsZr7WK98fUDEVb0R4y8LsQKZWfFf8lGyD+NDGo+Ol3jG0FflPGm1VXu+J8mvD/0fnoBB4HvlN8B20P1d1Xb1F8nUIWjCCtyDVA+dhxqvgA0xXoeuVvvxKvmV+G3FUsB64i2r3FNmQemomhU2IncgB7RuBvi4DXgY+Az4ox3YJ+xfoqcr9twjuEvyXWNobNScv2KvVHgfMN9AGZo7SjpCRsFulorIJfjPS2cWKYxnhncWXMAKqxKaS04mxTorIU6W2jvnnW2zIejiheTZnuRea4c62DLqMB6W1dvfE48BIGb762VbgDmy8LTiB97AjSOx9AyiVt1iBVtQI5VP0aWVTMFgyPx+PxeDwej8fj8XhOJ/4BKaeDmnkyytkAAAAASUVORK5CYII"
+        }
+    },
+    "Images":
+    {
+        "1" : "img/h1.jpeg",
+        "2" : "img/h2.jpeg",
+        "3" : "img/h3.jpeg"
+    }
+}

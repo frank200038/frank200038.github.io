@@ -1,0 +1,143 @@
+body{
+    background-image: url(img/bg3.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+header{
+    margin-top:80px;
+}
+ul{
+    list-style-type: none;
+}
+
+
+nav{
+    margin-left:30px;
+    width:50vw;
+    border-radius: 10px;
+    background-color: #d4af37;
+    background-image:url(img/quidditch.png);
+    background-repeat: no-repeat;
+    background-size: 6%;
+    background-position: right;
+}
+nav a{
+    color:white !important;
+    font-weight: 500;
+    font-size: 20px;
+}
+.active{
+    color:black !important;
+}
+
+.navbar-button>a{
+    background-color: rgb(0,85,102);
+    padding:20px 15px 20px 20px;
+    border-radius: 20%;
+    margin-right:45px;
+    cursor: pointer;
+}
+.navbar-button>a:hover{
+    background-color: rgb(172, 126, 0);
+    box-shadow:0px 0px 20px rgb(255, 187, 0);
+}
+
+.card-container{
+    margin-top:40px;
+}
+
+.card-1{
+    width:280px;
+    height:700px;
+    /* background: url(img/twitter-icon.png) no-repeat; */
+    background-size: contain;
+    background-position: 5px 10px;
+}
+.card-2{
+    width:50vw;
+    margin-left:70px;
+    
+    
+}
+
+.card-1,.card-2{
+    border: black solid;
+    border-width: 1px;
+    box-shadow: 10px 3px 5px #9999993b;
+    border-radius: 10px;
+    background-color: white;
+}
+
+
+
+.personal-info>ul{
+  margin-left: -50px; 
+  list-style-type: none;
+  margin-top: 20px;  
+}
+.personal-info li{
+    margin-bottom:10px;
+    padding-left:10px;
+    
+}
+
+
+.section-title{
+    display: inline-block;
+    background-color:rgb(0,85,102);
+    color: white;
+    margin-left:45%;
+    font-weight: 600;
+    padding:10px 10px 10px 10px;
+    border-radius: 5px;
+    box-shadow: 4px 4px #d4af37;
+}
+
+form{
+    margin-left:5%;
+    margin-right:5%;
+    margin-top:50px;
+    margin-bottom: 50px;
+
+    padding-left:50px;
+    padding-right:50px;  
+    padding-top:40px;
+    padding-bottom:40px;
+
+    border: 2px solid lightgray;
+    border-radius: 5px;
+
+    box-shadow:3px 3px 3px rgba(128, 128, 128, 0.493);
+
+    background-image: url(img/owl.png);
+    background-repeat: no-repeat;
+    background-size: 35%;
+    background-position: top right;
+}
+
+.form-group{
+    margin-bottom:30px;
+}
+button[type="submit"]{
+    background-color:rgb(0,85,102);
+    border-color: rgb(0,85,102);
+}
+button[type="submit"]:hover{
+    background-color: #d4af37;
+    border-color: #d4af37;
+}
+
+footer{
+    background-color: #a78000;
+    margin-top:5%;
+    padding-top:20px;
+    padding-bottom:20px;
+}
+footer>div{
+    color:white;
+    text-align: center;
+}
+
+
+
+
