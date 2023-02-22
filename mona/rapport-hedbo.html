@@ -74,14 +74,73 @@
                 </section>
                 <section class="semaine-4 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 4: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 4: 2023-02-13 ~ 2023-02-19 </h4>
+                        <p class="card-text">Cette semaine, je me concentre toujours sur le découvert du jour pour que cela prenne en charge les 3 types d'art. Cela demande aussi un changement dans le code de Swift UI vu que les 3 types d'arts sont dans 3 classes différentes.
+                        C'est possible que l'on trouve une meilleure solution pour régler ce problème. Toutefois, pour l'instant, je vais me procéder avec cette solution qui fonctionne sûrment. </p>
+                        <p>On a aussi mentionné le changement de permettre les usagers de choisir une photo déjà pris depuis leur album de photo. Cela est à faire après avoir modifié le découvert du jour</p>
+                        <p>On a aussi discuté avec Gaspard (Développeur d'Android dans notre équipe) pour migrer l'application Mona à un framework (Soit Ionic, soit React Native). Gaspard a bien fait un petit exposé, et Lena et nous, on a bien discuté les enjeux et les problèmes potentiels de cette
+                        décision (Temps d'apprentissage, faisabilité avant la fin de notre mandat etc.). À la fin, Lena est d'accord que la migration vers un framework est une solution faisable. Gaspard et moi, on va faire un prototype, nommé "Baby Mona" pour voir comment ça fonctionne dans un framework,
+                        tout en continuant à maintenir l'application existante. Plus de détails concernant comment on vas répartir les tâches, et aussi quel framework à choisir sont à décider plus tard avec Gaspard. Ce n'est qu'une décision initiale</p>
                     </div>
                 </section>
                 <section class="semaine-5 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 5: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 5: 2023-02-20-2023-02-26</h4>
+                        <p class="card-text">Cette semaine j'ai fini l'amélioration du découvert du jour. Plus précisément, j'ai réorganisé les "DataModel"s. Avant, on avait trois modèles de données individuels: <code>ArtworkDataModel</code>, <code>PlaceDataModel</code>, <code>PatrimoineDataModel</code>. Cela ne facilite pas l'inclusion de 3 types
+                        d'art dans le découvert du jour. Cela n'est pas une solution optimale de créer 3 vues dans Swift UI pour accommoder ces 3 types d'art. Par conséquent, j'ai décidé de créer un modèle de donnée en commun où j'ai extrait les paramètres communs de 3 types d'art, qui s'appelle MonaDataModel
+                        qui est un protocole auquel les 3 autres modèles de donnée se conforment.</p>
+                        <p>En faisant cela, il nous permet de stocker simplement ces 3 types d'art sans besoin de distinguer les types. Seulement quand on aura besoin d'accéder les informations particulières, on va "cast" l'objet de type général ver le type particulier. </p>
+                        <p>Pour faire cela, et grâce à l'inspiration de Lena, j'ai décidé de créer un tableau qui contient des numéros. Chaque fois, on va prendre aléatoirement un numéro, et si le numéro tombe dans un interval spécific, on va ensuite décider quel type d'art est à inclure dans notre découvert du jour.
+                        Le numéro aléatoirement choisi sera aussi gardé pour que le découvert du jour ne change pas avant la fin de la journée, et sera aussi utilisé par d'autres classes pour qu'on puisse savoir la type vraie de l'art afin de pouvoir faire le cast.</p>
+                        <p>Dans Swift UI, on a profité de cette nouvelle structure pour pouvoir alléger des parties répétitives afin d'accommoder les trois types d'art. Toutefois, vu qu'il y a sûrment des éléments qui sont propres à chaque type d'art, il faut toujours créer certains éléments particuliers pour cela.
+                        </p>
+                        <h5>Snippet du Code: <code>MonaModel</code></h5>
+                        <pre>
+                            <code>
+                            //
+                            //  Monamodel.swift
+                            //  Mona
+                            //
+                            //  Created by Yan Zhuang on 2023-02-16.
+                            //
+
+                            import Foundation
+
+                            protocol MonaModel: Codable, Identifiable {
+                            var id: Int {get}
+                            var duplicates: [Int]? {get}
+                            var source: String {get}
+                            var territory: String? {get}
+                            var borough: String? {get}
+                            var location: Location {get}
+                            var category: LocalizedString? {get} //For Badges
+                            var collection: String? {get set}
+                            var isCollected: Bool? {get set}
+                            var isTargeted: Bool? {get set}
+
+                            }
+
+                            // Different Structs for data type used by ArtworkModel and PlaceModel and PatrimoineModel
+                            struct Accessibilities: Codable {
+                            let fr: [String]
+                            let en: [String]
+                            }
+
+                            struct Title: Codable {
+                            let fr: String?
+                            let en: String?
+                            }
+
+                            struct Location: Codable {
+                            let lat, lng: Double
+                            }
+
+                            struct LocalizedString: Codable {
+                            let fr, en: String
+                            }
+                        </code>
+                        </pre>
+
                     </div>
                 </section>
                 <section class="semaine-6 card" style="margin-top:10px;">
