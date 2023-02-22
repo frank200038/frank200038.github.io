@@ -140,6 +140,97 @@
                             }
                         </code>
                         </pre>
+                        <h5>Snippet du Code: <code>CollectedViewModel</code></h5>
+                        <pre>
+                            <code>
+                                private init() {
+
+        if mainDataPublisher.allArtworks.isEmpty { return }
+
+        var random = 0
+
+        if let dateRandom = getSavedRandomDate() {
+            print("Date is \(dateRandom)")
+            if Calendar.current.isDateInToday(dateRandom){
+                random = getSavedRandom()!
+            }
+        } else{
+            random = getRandom()
+            setSavedRandom(random: random)
+        }
+
+        print("Random is \(random)")
+
+
+        // Make sure a random is assigned ! 0 is not possible, means something is wrong !!
+        guard random > 0 else {return}
+
+        // Decide if we will be getting Daily Artwork, Place or Patrimoine
+        switch random{
+            case 1..<5:
+                guard let randomArtwork = getRandomArtwork() else {return}
+                guard let savedDailyArt = getSavedDailyArtId() else {
+                    dailyWork = randomArtwork
+                    dailyArtwork = randomArtwork
+                    setSavedDailyArtwork(art: randomArtwork)
+                    print("Daily Artwork in guard is \(dailyArtwork!)")
+                    return
+                }
+
+                if checkIfToday() {
+                    dailyArtwork = getAllArtworks().filter{$0.id == savedDailyArt}.first
+                    return
+                }
+
+                print("Daily Artwork is \(dailyArtwork!)")
+
+                dailyWork = randomArtwork
+                dailyArtwork = randomArtwork
+                setSavedDailyArtwork(art: randomArtwork)
+            case 5..<10:
+                guard let randomPlace = getRandomPlace() else {return}
+                guard let savedDailyArt = getSavedDailyArtId() else {
+                    dailyWork = randomPlace
+                    dailyPlace = randomPlace
+                    setSavedDailyPlace(art: randomPlace)
+                    print("Daily Place in guard is \(dailyPlace!)")
+                    return
+                }
+
+                if checkIfToday() {
+                    dailyPlace = getAllPlaces().filter{$0.id == savedDailyArt}.first
+                    return
+                }
+
+                print("Daily Place is \(dailyPlace!)")
+
+                dailyWork = randomPlace
+                dailyPlace = randomPlace
+                setSavedDailyPlace(art: randomPlace)
+            default:
+                guard let randomPatrimoine = getRandomPatrimoine() else {return}
+                guard let savedDailyArt = getSavedDailyArtId() else {
+                    dailyWork = randomPatrimoine
+                    dailyPatrimoine = randomPatrimoine
+                    setSavedDailyPatrimoine(art: randomPatrimoine)
+                    print("Daily Patrimoine in guard is \(dailyPatrimoine!)")
+                    return
+                }
+
+                print("Daily Patrimoine is \(dailyPatrimoine!)")
+
+                if checkIfToday() {
+                    dailyPatrimoine = getAllPatrimoines().filter{$0.id == savedDailyArt}.first
+                    return
+                }
+
+                dailyWork = randomPatrimoine
+                dailyPatrimoine = randomPatrimoine
+                setSavedDailyPatrimoine(art: randomPatrimoine)
+        }
+
+    }
+                            </code>
 
                     </div>
                 </section>
