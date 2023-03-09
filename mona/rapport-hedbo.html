@@ -231,19 +231,47 @@
 
     }
                             </code>
-
+                        </pre>
                     </div>
                 </section>
                 <section class="semaine-6 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 6: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 6: 2023-02-27 ~ 2023-03-05  </h4>
+                        <p class="card-text">Durant la dernière semaine, on a rencontré la graphiste Barabara qui nous a présenté le Figma et aussi le nouveau tutoriel qu'elle a conçu. Dès que son retour des vacances, elle va travailler sur la conception de l'écran de log-in. Après cela, on pourrait
+                        commencer à développer la fonction de log-in qui permettra les usagers à sauvegarder leurs photos prises et récupérer leurs données si jamais il/elle change un cellulaire. Cette semaine j'ai réglé des bugs dans le "découvert du jour". Le problème est à cause du fuseau horaire différent utilisé
+                        par <code>Date()</code> et <code>Calender</code>. Le premier utilise l'horaire de GMT par défaut et le dernier utilise le fuseau horaire d'appareil actuel de l'usager. Cela cause un problème parce qu'on veut que "découvert du jour" ne change pas si on est toujours dans le même jour
+                        Toutefois, Swift ne fournit pas une façon facile pour convertir la date entre des différents fuseaux horaires. Donc j'ai du passé beaucoup de temps là-dessus pour trouver une solution stable. Finalement, je l'ai trouvé. Grâce à cette fonction qui converti l'heure de GMT à l'heure de Tonrot:</p>
+                        <pre>
+                            <code>
+                                // from: https://stackoverflow.com/a/59257432/7036218
+                                // Make sure the saved date is based on Eastern Time.
+                                extension Date{
+                                    func torontoDate() -> Date {
+                                            let nowUTC = Date()
+                                            let timeZoneOffset = Double(TimeZone(identifier: "America/Toronto")!.secondsFromGMT(for: nowUTC))
+                                            guard let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC) else {return Date()}
+
+                                            return localDate
+                                        }
+                                }
+
+                            </code>
+                        </pre>
+                        <p class="card-text">Grâce à la réorganisation de DataModel durant la semaine dernière, j'ai pu supprimer beaucoup de fonctions répétitives dans la class <code>CollectedViewModel()</code> vu que maintenant il faut simplement sauvegarder les 3 types d'art en tant que <code>MonaModel</code> au lieu
+                        d'avoir 3 versions différentes. Cela facilite beaucoup de choses</p>
+                        <p class="card-text">Cette semaine je vais essayer d'incorporer le nouveau tutoriel en mettant à jour l'interface pour que ça corresponde à celui que Barbara a conçu. Je vais aussi désactiver temporaire le mechanism existant de log-in dans l'application iOS qui génère chaque fois un UUID
+                        pour un nouveau usager et les envoie vers le serveur, ce qui cause un problème. (C'était une partie de code qui est censé pour le développement, mais elle est incluse dans la version stable). Finalement, il me faut résoudre le problème avec API pour que l'application puisse obtenir les informations
+                        directement du serveur.</p>
                     </div>
                 </section>
                 <section class="semaine-7 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 7: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 7: 2023-03-06 ~ 2023-03-12 </h4>
+                        <p class="card-text">Cette semaine, on n'a pas eu une rencontre normale. A la place, on est allé à l'exposition au centre phi pour participer à l'exhibition de Ludmila, notre artiste résidente du Mona de l'automne passé. </p>
+                        <p class="card-text">Par rapport à mon travail, cette semaine, je me concentre sur la construction de l'API pour que l'on puisse télécharger directement les données depuis le serveur. Toutefois, il y a des aspects à considérer quand on incorpore cette fonctionnalité, et ce qui devient le difficulté:
+                            1) Il faut bien considérer la possibilité que l'usager n'ait pas de connexion internet. 2) Il faut bien faire des mises à jour régulières, mais aussi efficace pour qu'on télécharger pas toujours les jeux de données complètes chaque fois. </p>
+                        <p class="card-text">Aussi, afin de préparer pour l'arrivée éventuelle de l'écran de sign-up, j'ai fait un mock up screen pour que je puisse commencer à écrire le code. On va attendre le retour de Barbara pour finaliser le UI de l'écran de sign-up. Le processus pour compléter l'écran de log-in et les logiques
+                        en derrière seront mon focus pour les prochaines semaines. Ce n'est pas facile parce qu'il implique beaucoup de changements dans le code, vu que ce n'était pas une fonction qui existe déjà, et que le code existant ne s'adapte pas bien à notre besoin.</p>
                     </div>
                 </section>
                 <section class="semaine-8 card" style="margin-top:10px;">
@@ -340,39 +368,7 @@
                                 <li class="date"></li>
                                 <li class="postal"></li>
                                 <li class="email"></li>
-                                <li class="address"></li>
-                            </ul>
-                        </div>
-                    </div>
-                </aside> -->
-<!--                <section class="card-2" >-->
-<!--                    <div class="card-body">-->
-<!--                        <article class="Education">-->
-<!--                            <h5 class="card-title cv-section-title">Education</h5>-->
-<!--                            <div class = "d-flex justify-content-start align-items-center education-1">-->
-<!--                                <div class="card education-card" style="width:450px;margin-right:10px;border-color:black;">-->
-<!--                                    <div id="educationCarouselIndicator" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">-->
-<!--                                        <div class="carousel-indicators">-->
-<!--                                            <button type="button" data-bs-target="#educationCarouselIndicator" data-bs-slide-to="0" class="active"-->
-<!--                                                aria-current="true" aria-label="UdeM Building"></button>-->
-<!--                                            <button type="button" data-bs-target="#educationCarouselIndicator" data-bs-slide-to="1"-->
-<!--                                                aria-label="Udem Logo"></button>-->
-<!--                                        </div>-->
-<!--                                        <div class="carousel-inner">-->
-<!--                                            <div class="carousel-item active">-->
-<!--                                                <img src="img/udem.jpeg" class="d-block w-100" alt="UdeM Building">-->
-<!--                                            </div>-->
-<!--                                            <div class="carousel-item">-->
-<!--                                                <img src="img/UdeM_logo.png" class="d-block w-100" alt="UdeM Logo">-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="card-body education-card-body">-->
-<!--                                        <div class="education-card-uni-title">-->
-<!--                                            <p><b>Université de Montréal</b></p>-->
-<!--                                        </div>-->
-<!--                                        <ul class="education-list">-->
-<!--                                            <li class="program"><b>Program: </b><a href="https://diro.umontreal.ca/programmes-cours/premier-cycle/" target="_blank">Bachelor of Science, Computer Science</a></li>-->
+                                <li cqiro.umontreal.ca/programmes-cours/premier-cycle/" target="_blank">Bachelor of Science, Computer Science</a></li>-->
 <!--                                            <li class="date"><b>Date: </b>09/2019 ~ 08/2023 (Expected)</li>-->
 <!--                                            <li class="gpa"><b>Current GPA: </b>4.247 / 4.3 (A+) </li>-->
 <!--                                        </ul>-->
