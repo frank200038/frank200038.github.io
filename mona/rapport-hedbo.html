@@ -145,91 +145,89 @@
                             <code>
                                 private init() {
 
-        if mainDataPublisher.allArtworks.isEmpty { return }
+                                   if mainDataPublisher.allArtworks.isEmpty
+                                    { return }
 
-        var random = 0
+                                    var random = 0
 
-        if let dateRandom = getSavedRandomDate() {
-            print("Date is \(dateRandom)")
-            if Calendar.current.isDateInToday(dateRandom){
-                random = getSavedRandom()!
-            }
-        } else{
-            random = getRandom()
-            setSavedRandom(random: random)
-        }
+                                    // Make sure that the dailyArtwork doesn't change in the same day.
+                                    // Retrieve the already saved random if it is the same date
+                                    // If not, generate a new random (A new day, or first time user)
 
-        print("Random is \(random)")
+                                    // We use Eastern Time to verify. Data will be stored in Eastern Time time.
+
+                                    if let date = getSavedRandomDate(){
+
+                                        var calender = Calendar.current
+                                        calender.timeZone = TimeZone(identifier: "America/Toronto")!
+
+                                        let dateRandom = torontoDateFromDate(date: date)
+
+                                        if calender.isDateInToday(dateRandom){
+                                            // Something is wrong if the random number returned is nil
+                                            if let randomNumber = getSavedRandom(){
+                                                random = randomNumber
+                                            } else{
+                                                return
+                                            }
+                                            random = getSavedRandom()!
+                                            print("Saved Random is \(random)")
+                                        } else{
+                                            random = getRandom()
+                                            removeSavedDailyArt()
+                                            setSavedRandom(random: random)
+                                            print("New Random is \(random)")
+                                        }
+                                    } else{
+                                        random = getRandom()
+                                        setSavedRandom(random: random)
+                                        print("First time Random is \(random)")
+                                    }
 
 
-        // Make sure a random is assigned ! 0 is not possible, means something is wrong !!
-        guard random > 0 else {return}
+                                    // Make sure a random is assigned ! 0 is not possible, means something is wrong !!
+                                    guard random > 0 else {return}
 
-        // Decide if we will be getting Daily Artwork, Place or Patrimoine
-        switch random{
-            case 1..<5:
-                guard let randomArtwork = getRandomArtwork() else {return}
-                guard let savedDailyArt = getSavedDailyArtId() else {
-                    dailyWork = randomArtwork
-                    dailyArtwork = randomArtwork
-                    setSavedDailyArtwork(art: randomArtwork)
-                    print("Daily Artwork in guard is \(dailyArtwork!)")
-                    return
-                }
+                                    // Decide if we will be getting Daily Artwork, Place or Patrimoine
+                                    switch random{
+                                        case 1..<5:
+                                            guard let randomArtwork = getRandomArtwork() else {return}
+                                            guard let savedDailyArt = getSavedDailyWorkId() else {
+                                                dailyWork = randomArtwork
+                                                setSavedDailyWork(work: randomArtwork)
+                                                print("Daily Artwork in guard is \(String(describing: dailyWork as? ArtworkModel))")
+                                                return
+                                            }
 
-                if checkIfToday() {
-                    dailyArtwork = getAllArtworks().filter{$0.id == savedDailyArt}.first
-                    return
-                }
+                                            dailyWork = getAllArtworks().filter{$0.id == savedDailyArt}.first
+                                            print("Daily Artwork is \(dailyWork as! ArtworkModel)")
 
-                print("Daily Artwork is \(dailyArtwork!)")
+                                        case 5..<10:
+                                            guard let randomPlace = getRandomPlace() else {return}
+                                            guard let savedDailyArt = getSavedDailyWorkId() else {
+                                                dailyWork = randomPlace
+                                                setSavedDailyWork(work: randomPlace)
+                                                print("Daily Place in guard is \(String(describing: dailyWork as? PlaceModel))")
+                                                return
+                                            }
 
-                dailyWork = randomArtwork
-                dailyArtwork = randomArtwork
-                setSavedDailyArtwork(art: randomArtwork)
-            case 5..<10:
-                guard let randomPlace = getRandomPlace() else {return}
-                guard let savedDailyArt = getSavedDailyArtId() else {
-                    dailyWork = randomPlace
-                    dailyPlace = randomPlace
-                    setSavedDailyPlace(art: randomPlace)
-                    print("Daily Place in guard is \(dailyPlace!)")
-                    return
-                }
+                                            dailyWork = getAllPlaces().filter{$0.id == savedDailyArt}.first
+                                            print("Daily Place is \(String(describing: dailyWork as? PlaceModel))")
 
-                if checkIfToday() {
-                    dailyPlace = getAllPlaces().filter{$0.id == savedDailyArt}.first
-                    return
-                }
+                                        default:
+                                            guard let randomPatrimoine = getRandomPatrimoine() else {return}
+                                            guard let savedDailyArt = getSavedDailyWorkId() else {
+                                                dailyWork = randomPatrimoine
+                                                setSavedDailyWork(work: randomPatrimoine)
+                                                print("Daily Patrimoine in guard is \(String(describing: dailyWork as? PatrimoineModel))")
+                                                return
+                                            }
 
-                print("Daily Place is \(dailyPlace!)")
+                                            dailyWork = getAllPatrimoines().filter{$0.id == savedDailyArt}.first
+                                            print("Daily Patrimoine is \(String(describing: dailyWork as? PatrimoineModel))")
+                                    }
 
-                dailyWork = randomPlace
-                dailyPlace = randomPlace
-                setSavedDailyPlace(art: randomPlace)
-            default:
-                guard let randomPatrimoine = getRandomPatrimoine() else {return}
-                guard let savedDailyArt = getSavedDailyArtId() else {
-                    dailyWork = randomPatrimoine
-                    dailyPatrimoine = randomPatrimoine
-                    setSavedDailyPatrimoine(art: randomPatrimoine)
-                    print("Daily Patrimoine in guard is \(dailyPatrimoine!)")
-                    return
-                }
-
-                print("Daily Patrimoine is \(dailyPatrimoine!)")
-
-                if checkIfToday() {
-                    dailyPatrimoine = getAllPatrimoines().filter{$0.id == savedDailyArt}.first
-                    return
-                }
-
-                dailyWork = randomPatrimoine
-                dailyPatrimoine = randomPatrimoine
-                setSavedDailyPatrimoine(art: randomPatrimoine)
-        }
-
-    }
+                            }
                             </code>
                         </pre>
                     </div>
@@ -240,27 +238,47 @@
                         <p class="card-text">Durant la dernière semaine, on a rencontré la graphiste Barabara qui nous a présenté le Figma et aussi le nouveau tutoriel qu'elle a conçu. Dès que son retour des vacances, elle va travailler sur la conception de l'écran de log-in. Après cela, on pourrait
                         commencer à développer la fonction de log-in qui permettra les usagers à sauvegarder leurs photos prises et récupérer leurs données si jamais il/elle change un cellulaire. Cette semaine j'ai réglé des bugs dans le "découvert du jour". Le problème est à cause du fuseau horaire différent utilisé
                         par <code>Date()</code> et <code>Calender</code>. Le premier utilise l'horaire de GMT par défaut et le dernier utilise le fuseau horaire d'appareil actuel de l'usager. Cela cause un problème parce qu'on veut que "découvert du jour" ne change pas si on est toujours dans le même jour
-                        Toutefois, Swift ne fournit pas une façon facile pour convertir la date entre des différents fuseaux horaires. Donc j'ai du passé beaucoup de temps là-dessus pour trouver une solution stable. Finalement, je l'ai trouvé. Grâce à cette fonction qui converti l'heure de GMT à l'heure de Tonrot:</p>
+                        Toutefois, Swift ne fournit pas une façon facile pour convertir la date entre des différents fuseaux horaires. Donc j'ai du passé beaucoup de temps là-dessus pour trouver une solution stable. Finalement, je l'ai trouvé. Grâce à cette fonction qui converti l'heure de GMT à l'heure de Tonrot. La date sera stocké
+                            sous format d'un string tout en conservant le fuseau d'horaire de Toronto:</p>
                         <pre>
                             <code>
-                                // from: https://stackoverflow.com/a/59257432/7036218
-                                // Make sure the saved date is based on Eastern Time.
-                                extension Date{
-                                    func torontoDate() -> Date {
-                                            let nowUTC = Date()
-                                            let timeZoneOffset = Double(TimeZone(identifier: "America/Toronto")!.secondsFromGMT(for: nowUTC))
-                                            guard let localDate = Calendar.current.date(byAdding: .second, value: Int(timeZoneOffset), to: nowUTC) else {return Date()}
 
-                                            return localDate
-                                        }
+                                extension Date{
+                                    // Make sure the saved date is based on Eastern Time.
+                                    // In String format
+                                    func torontoDateToString() -> String {
+                                        let timeZone = TimeZone(identifier: "America/Toronto")!
+                                        let dateFormatter = DateFormatter()
+
+                                        dateFormatter.timeZone = timeZone
+                                        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+                                        return dateFormatter.string(from: Date())
+                                    }
                                 }
 
                             </code>
                         </pre>
+                        <p class="card-text">J'ai créé aussi une autre fonction similaire pour pouvoir convertir la date stockée en String vers <code>Date()</code> aussi en conservant le fuseau d'horaire</p>
+                        <pre>
+                            <code>
+                                // Convert the saved date in String form back to Date type preserving the timezone
+                                private func torontoDateFromDate(date: String) -> Date{
+                                    let timeZone = TimeZone(identifier: "America/Toronto")
+
+                                    let dateFormatter = DateFormatter()
+
+                                    dateFormatter.timeZone = timeZone
+                                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+                                    return dateFormatter.date(from: date)!
+                                }
+                            </code>
+                        </pre>
                         <p class="card-text">Grâce à la réorganisation de DataModel durant la semaine dernière, j'ai pu supprimer beaucoup de fonctions répétitives dans la class <code>CollectedViewModel()</code> vu que maintenant il faut simplement sauvegarder les 3 types d'art en tant que <code>MonaModel</code> au lieu
                         d'avoir 3 versions différentes. Cela facilite beaucoup de choses</p>
-                        <p class="card-text">Cette semaine je vais essayer d'incorporer le nouveau tutoriel en mettant à jour l'interface pour que ça corresponde à celui que Barbara a conçu. Je vais aussi désactiver temporaire le mechanism existant de log-in dans l'application iOS qui génère chaque fois un UUID
-                        pour un nouveau usager et les envoie vers le serveur, ce qui cause un problème. (C'était une partie de code qui est censé pour le développement, mais elle est incluse dans la version stable). Finalement, il me faut résoudre le problème avec API pour que l'application puisse obtenir les informations
+                        <p class="card-text">Cette semaine, je vais essayer d'incorporer le nouveau tutoriel en mettant à jour l'interface pour que ça corresponde à celui que Barbara a conçu. Je vais aussi désactiver temporaire le mechanism existant de log-in dans l'application iOS qui génère chaque fois un UUID
+                        pour un nouvel usager et les envoie vers le serveur, ce qui cause un problème. (C'était une partie de code qui est censé pour le développement, mais elle est incluse dans la version stable). Finalement, il me faut résoudre le problème avec API pour que l'application puisse obtenir les informations
                         directement du serveur.</p>
                     </div>
                 </section>
@@ -276,212 +294,216 @@
                 </section>
                 <section class="semaine-8 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 8: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 8: 2023-03-13 ~ 2023-03-19 </h4>
+                        <p class="card-text">Cette semaine, on a rencontré avec le prof Guy Lapalme pour faire un suivi de mi-session. J'ai bien présenté ce que j'ai fait et mon "focus" pour le reste du trimestre: La partie de connectivité de l'application pour qu'elle sois plus moderne avec la possibilité de modifier les photos/commentaires,
+                        se connecter/s'inscrire. Toutefois, prof Lapalme nous a suggéré de nous concentrer sur un seul aspect de l'application pour que l'on puisse finir avant la présentation finale. J'ai donc décidé de me concentrer sur la partie d'inscription de l'application, ce qui va prendre un peu de temps</p>
+                        <p class="card-text">En ce qui concerne le progrès de projet, comme mentionné la semaine passée, je concentre toujours sur la création de l'API pour la fonction de l'inscription. J'ai réussi un écran mock up de login avec des capacités basiques. Il me faut maintenant commencer à réaliser les logiques back-end
+                        pour l'inscription. Il me faut aussi tenir compte de futurs changements en créant du code assez flexible et adaptable aux futurs changements. Je vais bien profiter des compétences d'asynchro en Swift pour pouvoir faire des requêtes API. Toutefois, sans avoir une décision finale sur l'UI c'est difficile
+                        de déterminer comment on va afficher des informations (Ex: Erreurs, Notifications) parce qu'il faut bien trouver une façon de réagir la réponse du serveur de façon compréhensible pour les usagers. Je vais essayer de créer de code comme placeholder pour qu'on puisse les remplacer une fois que
+                        notre conceptrice Barbara aie décidé la conception de l'interface pour l'écran de l'inscription, ainsi que les éléments pertinents (Affichage d'erreur etc.) </p>
                     </div>
                 </section>
                 <section class="semaine-9 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 9: </h4>
-                        <p class="card-text"></p>
+                        <h4 class="card-title text-center">Semaine 9: 2023-03-20 ~ 2023-03-26</h4>
+                        <p class="card-text">Cette semaine, on n'a pas de rencontre étant donné que Lena est à une conférence à Paris. On a tous travaillé sur ce qu'on a décidé dans le suivi de mi-session la semaine passée. Je poursuis la création de l'API de la fonction de l'inscription. En profitant des appels
+                        asynchro de Swift, la création d'appel API est vraiment simple. Le code devient plus lisible et compréhensible, en comparaison de l'utilisation de "Completion handle" comme avant. Ci-dessous est la fonction responsable de faire l'appel au serveur. On a utilisé simplement un URLRequest pour faire l'appel: </p>
+                        <pre>
+                            <code>
+                                // Returns the response from the server and the status code of the response
+                                private func registerPost(username: String, email: String, password: String, passwordConfirm: String) async throws -> (Dictionary&lt;String, Any&gt;, Int)? {
+                                    let url = URL(string: "https://picasso.iro.umontreal.ca/~mona/api/v3/register")
+
+                                    var urlRequest = URLRequest(url: url!)
+                                    let headers  = [
+                                        "Accept" : "application/json",
+                                        "Content-Type" : "application/json"
+                                    ]
+                                    urlRequest.allHTTPHeaderFields = headers
+                                    urlRequest.httpMethod = "POST"
+
+                                    let parameters = [
+                                        "username": username,
+                                        "email": email,
+                                        "password": password,
+                                        "password_confirmation": passwordConfirm
+                                    ]
+
+                                    do { let requestBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+                                        print(requestBody)
+                                        urlRequest.httpBody = requestBody
+                                    } catch{
+                                        print("error creating data for json")
+                                    }
+
+                                    let config = URLSessionConfiguration.default
+                                    config.waitsForConnectivity = true
+                                    config.timeoutIntervalForResource = 60
+
+                                    let (data, response) = try await URLSession(configuration: config).data(for: urlRequest)
+
+                                    do{
+                                        let dict = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String:Any]
+                                        let responseTest = (response as! HTTPURLResponse).statusCode
+                                        return (dict!, responseTest)
+                                    } catch {
+                                        print("error in do is \(error)")
+                                    }
+
+                                    return nil
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">La partie du code en haut est seulement responsable pour faire l'appel. Afin de pouvoir traiter les réponses reçues et les erreurs potentielles, j'ai créé une autre fonction <code>register(...)</code>.
+                            C'est aussi la fonction que l'interface va appeler.</p>
+                        <pre>
+                            <code>
+                                func register(username: String, email: String, password: String, passwordConfirm: String) async{
+                                    do{
+                                        if let (data, responseCode) = try await registerPost(username: username, email: email, password: password, passwordConfirm: passwordConfirm){
+                                            print("data is : \(data)")
+                                            print("--------")
+                                            print("responseCode is: \(responseCode)")
+
+                                            var registerErrors: [RegisterError] = []
+
+                                            var errorsAll : [[String]] = []
+                                            var flattenedErrorArray: [String] = []
+
+                                            guard responseCode != 404 || responseCode != 500 else{
+                                                errorsRegister = [RegisterError.serverError]
+                                                hasErrors = true
+                                                return
+                                            }
+
+                                            if let errors = data["errors"]{
+                                                let errorsSequence = errors as! Dictionary &lt;String,[String]&gt;
+
+                                                errorsSequence.map({errorsAll.append($1)})
+                                                flattenedErrorArray = errorsAll.flatMap({$0})
+                                                registerErrors = convertErrorDescriptionsToRegisterError(errorDescriptionsArray: flattenedErrorArray)
+                                                print(registerErrors)
+
+                                            }
+
+                                            for error in registerErrors{
+                                                print("error converted is \(error.localizedDescription)")
+                                            }
+
+                                            // Make sure the registration proceed without error
+                                            guard registerErrors.count == 0 else{
+                                                DispatchQueue.main.async {
+                                                    self.errorsRegister = registerErrors
+                                                    self.hasErrors = true
+                                                }
+                                                return
+                                            }
+
+                                            if let token = data["token"]{
+                                                let keychain = KeychainSwift()
+                                                keychain.set(token as! String, forKey: "token")
+                                                DispatchQueue.main.async {
+                                                    self.success = true
+                                                }
+                                            } else{
+                                                // Should either fail previously or has a token. Otherwise there is a problem
+                                                DispatchQueue.main.async {
+                                                    self.errorsRegister = [RegisterError.serverError]
+                                                    self.hasErrors = true
+                                                }
+                                                return
+                                            }
+                                        }
+                                    } catch {
+                                        print("error is \(error)")
+                                    }
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">
+                            Il me faut aussi trouver une façon pour pouvoir présenter les erreurs de façon "user-friendly" et dans deux langues différentes. Par conséquent, j'ai décidé de créer une classe d'erreur peronalisée qui s'appelle <code>RegisterError</code>.
+                            On sera capable de convertir les erreurs reçues du serveur en <code>RegisterError</code> et ensuite, on peut facilement les afficher dans l'interface. Bien sûr, ici j'ai décidé de les afficher sous forme d'une alerter en concaténant les erreurs reçues.
+                            Comme mentionné en haut, il faut que Barbara prenne une décision créative pour qu'on décide finalement la manière officielle de présenter ces erreurs.
+                        </p>
+                        <pre>
+                            <code>
+                                // Customized Error class for potential errors encountered while registering. Localized (In French or in English)
+                                enum RegisterError: String, Error, LocalizedError{
+
+                                    case duplicatedUserName = "The username has already been taken."
+                                    case passwordNotStrong = "The password confirmation does not match."
+                                    case passwordNotMatch = "The password must be at least 6 characters."
+                                    case duplicatedEmail = "The email has already been taken."
+                                    case serverError = "Server Error"
+
+                                    public var errorDescription: String? {
+                                        switch self{
+                                            case .duplicatedUserName:
+                                                return NSLocalizedString("duplicated_username", comment: "Duplicated Username")
+                                            case .passwordNotMatch:
+                                                return NSLocalizedString("password_not_match", comment: "Password does not match")
+                                            case .passwordNotStrong:
+                                                return NSLocalizedString("password_not_strong", comment: "Password is not strong enough")
+                                            case .duplicatedEmail:
+                                                return NSLocalizedString("duplicated_email", comment: "Duplicated Email")
+                                            case .serverError:
+                                                return NSLocalizedString("server_error", comment: "Server Error")
+                                        }
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">J'ai bien testé toutes les fonctions que j'ai créées et l'application peut bien réagir face à des erreurs reçues en affichant ces erreurs et en donnant l'usager l'opportunité de réessayer. Au cas où
+                        l'inscription soit faite avec succès, on va simplement cacher l'écran d'inscription et procéder avec l'écran de tutoriel. À cause de la limite de temps dans ce cours de projet, on a décidé de laisser la fonction de se connecter ou de se déconnecter pour plus tard.
+                        </p>
                     </div>
                 </section>
                 <section class="semaine-10 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 10: </h4>
+                        <h4 class="card-title text-center">Semaine 10: 2023-03-27 ~ 2023-04-02 </h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
                 <section class="semaine-11 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 11: </h4>
+                        <h4 class="card-title text-center">Semaine 11: 2023-04-03 ~ 2023-04-09</h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
                 <section class="semaine-12 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 12: </h4>
+                        <h4 class="card-title text-center">Semaine 12: 2023-04-10 ~ 2023-04-16</h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
                 <section class="semaine-13 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 13: </h4>
+                        <h4 class="card-title text-center">Semaine 13: 2023-04-17 ~ 2023-04-23 </h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
                 <section class="semaine-14 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 14: </h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-                <section class="semaine-15 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 15: </h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-                <section class="semaine-16 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 16: </h4>
+                        <h4 class="card-title text-center">Semaine 14: 2023-04-24 ~ 2023-04-30</h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
             </div>
             <hr>
+            <h3 style="text-align:center;">Vision Futurs:</h3>
             <div class="card-container">
                 <section class="semaine-1 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 1: </h4>
+                        <h4 class="card-title text-center"> </h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
             </div>
-                <!-- <aside class="card-1" >
-                    <div class="card-body">
-                        <h5 class="title" style="text-align: center;">Harry Potter</h5>
-                        <div id="harry" class="carousel slide" data-bs-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#harry" data-slide-to="0" class="active"></li>
-                                <li data-target="#harry" data-slide-to="1"></li>
-                                <li data-target="#harry" data-slide-to="2"></li>
-                            </ol>
-                            <div class="carousel-inner">
-                                <div class="carousel-item active"></div>
-                                <div class="carousel-item"> </div>
-                                <div class="carousel-item"></div>
-                            </div>
-                            <a class="carousel-control-prev" href="#harry" data-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#harry" data-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </a>
-                        </div>
-                        <div class="personal-info">
-                            <ul>
-                                <li class="name"></li>
-                                <li class="alias"></li>
-                                <li class="age"></li>
-                                <li class="gender"></li>
-                                <li class="date"></li>
-                                <li class="postal"></li>
-                                <li class="email"></li>
-                                <li cqiro.umontreal.ca/programmes-cours/premier-cycle/" target="_blank">Bachelor of Science, Computer Science</a></li>-->
-<!--                                            <li class="date"><b>Date: </b>09/2019 ~ 08/2023 (Expected)</li>-->
-<!--                                            <li class="gpa"><b>Current GPA: </b>4.247 / 4.3 (A+) </li>-->
-<!--                                        </ul>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <div class="education-accomp-1">-->
-<!--                                    <p >-->
-<!--                                        My name is Yan Zhuang, I also go by Frank. I was born and raised in <a href="https://en.wikipedia.org/wiki/Shanghai" target="_blank">Shanghai, China</a>, a city with almost 27 million people.-->
-<!--                                        For secondary study, I was lucky to be admitted in Shanghai United Int'l School (BC Department) where I studied under the curriculum designed by the British Columbia Ministry of Education.-->
-<!--                                        I obtained my secondary diploma (Also known as Dogwood diploma) in August 2019-->
-<!--                                    </p>-->
-<!--                                    <p >-->
-<!--                                        I am currently a second year student in Université de Montréal, in the Department of Computer Science and Operational Research (<a href="https://diro.umontreal.ca" target="_target">DIRO</a>).-->
-<!--                                        I am mainly interested in Software Engineering and Bioinformatics (with a focus on cancerology studies), these two will be the main fields that I will pursue.-->
-<!--                                    </p>-->
-<!--                                    <p >-->
-<!--                                       As a polygot, I am fully trilingual with Mandarin being my native language (Growing up in Shanghai, I am also able to understand Shanghainese), English and French being my second and third languague respectively. Besides these three languages, I have conversational-->
-<!--                                       level of Spanish and currently learning Portuguese.-->
-<!--                                    </p>-->
-<!--                                    <p>-->
-<!--                                        Besides being busy with coding projects, during my free time, I also enjoying watching movies. I regard the 80s as my-->
-<!--                                        favourite movie period, where we got ourselves several classiques that-->
-<!--                                        people still watch these days such as "Top Gun", "Ghostbuster", "Karate Kids" and more.-->
-<!--                                    </p>-->
-<!--                                </div>-->
-<!--                                -->
-<!--                            </div>-->
-<!--                                <a href="files/cv.pdf" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Download CV</a>-->
-<!--                            <hr>-->
-<!--                        </article>-->
-<!--                        &lt;!&ndash; <article class="Abilities">-->
-<!--                            <h5 class="card-title cv-section-title"></h5>-->
-<!--                            <div class="card-deck">-->
-<!--                                <div class="ability-main-1 card ">-->
-<!--                                    <div class="ability-body-1 card-body "></div>-->
-<!--                                </div>-->
-<!--                                <div class="ability-main-2 card ">-->
-<!--                                    <div class="ability-body-2 card-body "></div>-->
-<!--                                </div>-->
-<!--                                <div class="ability-main-3 card ">-->
-<!--                                    <div class="ability-body-3 card-body "></div>-->
-<!--                                </div>-->
-<!--                                <div class="ability-main-4 card ">-->
-<!--                                    <div class="ability-body-4 card-body "></div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <hr>-->
-<!--                        </article> &ndash;&gt;-->
-<!--                        <article class = "timeline-card">-->
-<!--                            <h5 class="card-title cv-section-title">Awards & Scholarship</h5>-->
-<!--                            <div class="timeline">-->
-<!--                                <ul class="events d-flex justify-content-around">-->
-<!--                                    <li class="event-list">-->
-<!--                                        <div class="date-exp">2021 September</div>-->
-<!--                                        <div class="event-card card">-->
-<!--                                            <div class="card-body">-->
-<!--                                                <p class="scholarship" style="font-size:25px;">-->
-<!--                                                    <b>Jacques St-Pierre Scholarship</b><br>-->
-<!--                                                    <span>Université de Montréal</span>-->
-<!--                                                </p>-->
-<!--                                                <ul class="detail-list-1">-->
-<!--                                                    <li class="value"><b>Value: </b>$3000</li>-->
-<!--                                                </ul>-->
-<!--                                                <p class="description">-->
-<!--                                                    Awarded to student in Bachelor of Informatics/Math-Info having the higest GPA-->
-<!--                                                </p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </li>-->
-<!--                                    <li class="event-list">-->
-<!--                                        <div class="date-exp">09/2020 - Current</div>-->
-<!--                                        <div class="event-card card">-->
-<!--                                            <div class="card-body">-->
-<!--                                                <p class="scholarship" style="font-size:25px;">-->
-<!--                                                    <b>Exemption Scholarship (Each semester)</b><br>-->
-<!--                                                    <span>Université de Montréal</span>-->
-<!--                                                </p>-->
-<!--                                                <ul class="detail-list-1">-->
-<!--                                                    <li class="value"><b>Value: </b>Amount varies</li>-->
-<!--                                                </ul>-->
-<!--                                                <p class="description">-->
-<!--                                                    Awarded to international students that demonstrate an outstanding academic performance-->
-<!--                                                </p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </li>-->
-<!--                                    <li class="event-list">-->
-<!--                                        <div class="date-exp">01/2020 - current</div>-->
-<!--                                        <div class="event-card card">-->
-<!--                                            <div class="card-body">-->
-<!--                                                <p class="scholarship" style="font-size:25px;">-->
-<!--                                                    <b>Excellence Mention</b><br>-->
-<!--                                                    <span>Université de Montréal</span>-->
-<!--                                                </p>-->
-<!--                                                <p class="description">-->
-<!--                                                    Awarded each semester to students whose GPA maintains above 3.625/4.3-->
-<!--                                                </p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
-<!--                        </article>-->
-<!--                    </div>-->
-<!--                </section>-->
-<!--            </div>-->
         </main>
         <footer>
             <div>
-                Created by Yan Zhuang. All rights reserved 2022©
+                Created by Yan Zhuang. All rights reserved 2023©
             </div>
         </footer>
-        <!-- <script src="index.js"></script> -->
     </body>
     
     
