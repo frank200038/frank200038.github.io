@@ -435,6 +435,7 @@
                                     case passwordNotMatch = "The password must be at least 6 characters."
                                     case duplicatedEmail = "The email has already been taken."
                                     case serverError = "Server Error"
+                                    case usernameNotValid = "The username may only contain letters, numbers, dashes and underscores."
 
                                     public var errorDescription: String? {
                                         switch self{
@@ -448,6 +449,8 @@
                                                 return NSLocalizedString("duplicated_email", comment: "Duplicated Email")
                                             case .serverError:
                                                 return NSLocalizedString("server_error", comment: "Server Error")
+                                            case .usernameNotValid:
+                                                return NSLocalizedString("username_not_valid", comment: "The username may only contain letters, numbers, dashes and underscores.")
                                         }
                                 }
                             </code>
@@ -460,40 +463,55 @@
                 <section class="semaine-10 card" style="margin-top:10px;">
                     <div class="card-body">
                         <h4 class="card-title text-center">Semaine 10: 2023-03-27 ~ 2023-04-02 </h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-                <section class="semaine-11 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 11: 2023-04-03 ~ 2023-04-09</h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-                <section class="semaine-12 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 12: 2023-04-10 ~ 2023-04-16</h4>
-                        <p class="card-text"></p>
+                        <p class="card-text">Cette semaine, j'ai décidé de travailler sur la fonctionnalité de "téléchargement de données depuis le serveur". C'est une fonction hyper importante pour MONA. J'ai décidé de travailler d'abord sur les different "DataService" pour les objets (Ex: PatrimoinesDataService).
+                         J'ai dû modifier le mécanisme d'obtenir les données du serveur en profitant du patron "async/await". Ci-dessous est ce que l'on a pour <code>PatrimoinesDataService</code></p>
+                        <pre>
+                            <code>
+                                // parses JSON already in files
+                                private func getPatrimoinesNewFromFile() throws{
+
+                                    let directory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+                                    let url = directory.appendingPathComponent("patrimoinesInternet.json")
+
+                                    if fileManager.fileExists(atPath: url.path){
+
+                                        let data = try Data(contentsOf: url)
+                                        let json = try JSONDecoder().decode(PatrimoineDataModel.self, from: data)
+                                        print("patrimoines done")
+                                        allPatrimoines = json.data
+                                    }
+
+                                }
+
+
+                                func getPatrimoinesNewFromAPI() async throws {
+                                    let directory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+                                    let writeURL = directory.appendingPathComponent("patrimoinesInternet.json")
+
+                                    guard let url = URL(string: "https://picasso.iro.umontreal.ca/~mona/api/v3/heritages") else {return}
+
+                                    let (data, _) = try await URLSession.shared.data(from: url)
+                                    try data.write(to: writeURL)
+                                    print(data)
+                                    print("patrimoines done")
+
+                                    try getPatrimoinesNewFromFile()
+
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">La stratégie est assez directe à comprendre ici. L'application va d'abord télécharger des données brutes (en JSON) depuis le serveur et les écrire dans un fichier local qui sera stocké dans l'appareil de l'usager à moins qu'il supprime l'application.
+                            Au lieu de lire les données téléchargées directement, il va ensuite lire les données dans le fichier. Pour le démarrage dans le futur, l'application va toujours lire les données dans le fichier pour générer les objets. Cela seront ces fichiers que l'on va mettre à jour dans
+                            le futur aussi pour que l'usage puisse toujours recevoir les dernières données.  </p>
+                        <p class="card-text">
+                            Les deux fonctions génèrent bien les erreurs au lieu d'être géré directement dans cette classe. Cela a été fait pour pouvoir faciliter la gestion d'erreur. Je compte de géré les erreurs directement dans la classe <code>APILoadData()</code>. Je crois que cela va aussi faciliter
+                            l'affichage des erreurs avec SwiftUI. Surtout vu qu'on a déjà le processus d'inscription qui va s'exécuter en même temps, la gestion d'erreur pour n'importe quel processus sera vraiment important pour fournir une bonne expérience d'utilisateur.
+                        </p>
                     </div>
                 </section>
                 <section class="semaine-13 card" style="margin-top:10px;">
                     <div class="card-body">
                         <h4 class="card-title text-center">Semaine 13: 2023-04-17 ~ 2023-04-23 </h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-                <section class="semaine-14 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 14: 2023-04-24 ~ 2023-04-30</h4>
-                        <p class="card-text"></p>
-                    </div>
-                </section>
-            </div>
-            <hr>
-            <h3 style="text-align:center;">Vision Futurs:</h3>
-            <div class="card-container">
-                <section class="semaine-1 card" style="margin-top:10px;">
-                    <div class="card-body">
-                        <h4 class="card-title text-center"> </h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
