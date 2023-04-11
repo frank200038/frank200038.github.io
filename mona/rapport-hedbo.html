@@ -509,9 +509,196 @@
                         </p>
                     </div>
                 </section>
+                <section class="semaine-11 card" style="margin-top:10px;">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Semaine 11: 2023-04-03 ~ 2023-04-09</h4>
+                        <p class="card-text">Je travaille sur l'intégration du processus du téléchargement de données avec l'UI ainsi que la gestion d'erreurs. J'ai décidé de lancer le téléchargement dans <code>APILoadData()</code>. Vu que ces 4 appels d'API seront exécuté en parallel, cela sera difficile de
+                            savoir exactement d'où provient l'erreur. Donc, j'ai décidé d'afficher un message général aussitôt qu'on reçoit une erreur du téléchargement. Comme suivant:</p>
+                        <pre>
+                            <code>
+                                func downloadDataFromApi() async {
+
+                                    hasErrorDownload = false
+
+                                    do{
+                                        try await vmPlaces.getPlacesNewFromAPI()
+                                        try await vmArtworks.getArtworksNewFromAPI()
+                                        try await vmPatrimoines.getPatrimoinesNewFromAPI()
+                                        try await vmBadges.getBadgesNewFromAPI()
+
+                                    } catch {
+                                        hasErrorDownload = true
+                                        print("normal error is in API \(error)")
+
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">
+                            Ici, la variable <code>hasErrorDownload</code> est une variable de type publisher. Cela nous donne la possibilité d'informer à l'UI qu'il y a une erreur. Cela va nous permettre d'afficher un message d'erreur à l'usager. J'ai aussi décidé qu'on va lancer le processus d'inscription
+                            d'abord, après on va initier le téléchargement de données. Grâce à <code>ProgressView()</code>, c'est facile à changer le message affiché sous l'indicateur. Aussi, grâce aux variables de type "Publisher" et la fonction <code>onReceive()</code> de <code>ProgressView()</code>,
+                            c'est possible de réévaluer la situation chaque fois qu'on reçoit des nouvelles données (Soit un achèvement de téléchargement soit le succès d'inscription). Comme suivant:
+                        </p>
+                        <pre>
+                            <code>
+                                .overlay(!$buttonPressed.wrappedValue ? nil:
+                                    Color.gray
+                                        .opacity(0.40)
+                                        .ignoresSafeArea()
+                                        .overlay( //$register.hasErrors.wrappedValue ? nil :
+                                                    ProgressView(progressViewText)
+                                                    .onReceive(mainData.$allArtworks){ result in
+                                                        print("Download Artworks OnReceive \(result.count)")
+                                                                checkAllDone()
+                                                            }
+                                                        .onReceive(mainData.$allPatrimoines){ result in
+                                                            print("Download Patrimoines OnReceive \(result.count)")
+                                                                checkAllDone()
+                                                            }
+                                                        .onReceive(mainData.$allPlaces){ result in
+                                                            print("Download Places OnReceive \(result.count)")
+                                                                checkAllDone()
+                                                            }
+                                                        .onReceive(mainData.$allBadges){ result in
+                                                            print("Download Badges OnReceive \(result.count)")
+                                                                checkAllDone()
+                                                            }
+                                                        .onReceive(register.$success){ result in
+                                                                print("Register OnReceive \(result)")
+                                                                if result{
+                                                                    disableTextField = true
+                                                                }
+                                                                checkAllDone()
+                                                            }
+                                                )
+                                )
+                            </code>
+                        </pre>
+                        <p class="card-text">Ici, chaque fois qu'on reçoit une nouvelle valeur, le code dans "closure" sera exécuté. Ici, on a créé une fonction auxiliaire pour nous aider à determiner si le processus d'inscription et le téléchargement sont finis sans problème. Le code de <code>checkAllDone()</code>
+                            est comme suivant:</p>
+                        <pre>
+                            <code>
+                                func checkAllDone(){
+                                    if($register.success.wrappedValue && !$mainData.allPatrimoines.wrappedValue.isEmpty && !$mainData.allPlaces.wrappedValue.isEmpty && !$mainData.allArtworks.wrappedValue.isEmpty &&
+                                       !$mainData.allBadges.wrappedValue.isEmpty){
+                                        firstTimeUser = true
+                                        currentUserSignedIn = true
+                                    }
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">Au cas d'erreur, il nous faut donc lancer une alerte et arrêter le processus tout de suite. Il nous faut bien tenir en compte de deux situations: 1) L'inscription, ce qui est lancée en premier, a échoué. 2) L'inscription a été faite avec succès (Données dans
+                            la base de données et le token a été généré) mais il y a des erreurs liées avec le téléchargement. La première situation est facile à résoudre, on l'a déjà résolu l'autre semaine. Toutefois, la deuxième est un peu difficile. Tout d'abord, j'ai dû trouver une façon pour pouvoir lancer
+                            l'alerte dans les deux cas. La règle de SwiftUI n'autorise pas de déclarer deux alertes séparées dans la même hiérarchie. Sans vouloir modifier la hiérarchie de View, j'ai dû créer un <code>Binding&lt;Bool&gt;</code> personnalisé et le contenu d'alerte sera généré à l'aide d'une fonction
+                            auxiliaire comme suivant:</p>
+                        <pre>
+                            <code>
+                                .alert(isPresented: alertPresentCondBiding, content: {onBoardingAlert()})
+
+                                // Customized Binding to be able to present the Alert whenever error occurs (for register or for downloading)
+                                private var alertPresentCondBiding : Binding&lt;Bool&gt;{
+                                    return Binding&lt;Bool&gt;(get: {
+                                        return register.hasErrors || loadData.hasErrorDownload}, set: {if !$0 {self.register.hasErrors = false}
+                                    })
+                                }
+
+                                func onBoardingAlert() -> Alert{
+                                    if register.hasErrors{
+                                        return Alert(title: Text(LocalizedStringKey("error_registration_title")), message: processRegistrationErrors(), dismissButton: .default(Text("OK"), action: {
+                                                            buttonPressed = false
+                                                            register.clearErrors()
+                                                    }))
+                                    }
+
+                                    return Alert(title: Text(LocalizedStringKey("error_download")),message: Text(LocalizedStringKey("error_download_msg")), dismissButton: .default((Text("OK")), action:{
+                                            buttonPressed = false
+
+                                    }))
+
+                                }
+                            </code>
+                        </pre>
+                        <p class="card-text">De plus, vu que le téléchargement ne se démarre qu'après l'inscription. Cela veut dire que s'il y a des erreurs produites lors de téléchargement, l'inscription sera déjà faite avec succès. À cause de cela, j'ai décidé que si l'inscription a été faite avec succès et qu'il y a des
+                            erreurs de téléchargement, l'usager ne pourra plus modifier les informations saisies et que le processus d'inscription ne sera pas refaite. Quand l'usager clique le bouton, c'est seulement le téléchargement qui sera exécuté, et ce jusqu'à l'achèvement où l'usager peut accéder au tutoriel de l'application comme avant
+                        </p>
+                        <p class="card-text">La fonctionnalité de téléchargement est presque terminée. Je me suis rendu compte qu'il existe un petit problème avec le téléchargement de données liées avec les <code>Badges</code>. En effet, le format de JSON (les attributs) sont changés quand l'API a été mise à
+                            jour à Version 3. Pour pouvoir décoder les <code>Badges</code>, un décodeur personnalisé est créé dans <code>BadgesModel</code>. Cependant, ce décodeur a été fait basant sur les attributs pour la version 2 de l'API. Cela veut dire que les attributs dans la version 3 ne seront plus reconnus
+                            par le décodeur. Je ne veux pas perturber le système de badges actuel, donc j'ai essayé de trouver les correpondances entre les anciens attributs et ceux nouveaux pour que je puisse réécrire le décodeur sans besoin changer grandement la structure. Suivant est le nouveau décodeur dans
+                            <code>BadgesModel</code></p>
+                        <pre>
+                            <code>
+                                    struct BadgeModel: Decodable, Identifiable {
+                                        let id: Int
+                                        let type: String?
+                                        let title: LocalizedString
+                                        let description: LocalizedString
+                                        let notification: LocalizedString
+                                        let required_count: BadgeRequiredArgs // Required Count
+                                        let badgeType: BadgeType
+                                        let badgeable: BadgeOptionalArgs // "Badgeable" in v3 data
+
+
+                                        private enum CodingKeys: String, CodingKey {
+                                            case id, type, badgeable, required_count, title, description, notification
+
+                                        }
+
+                                        init(from decoder: Decoder) throws {
+                                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                                            let jsonDecoder = JSONDecoder()
+
+                                            self.id = try container.decode(Int.self, forKey: .id)
+                                            self.type = try container.decodeIfPresent(String.self, forKey: .type)
+                                            print("type is \(self.type)")
+
+                                            let title : [String:String] = try container.decode([String:String].self, forKey: .title)
+                                            self.title = LocalizedString(fr: title["fr"]!, en: title["en"]!)
+
+                                            let description : [String: String] = try container.decode([String:String].self, forKey: .description)
+                                            self.description = LocalizedString(fr: description["fr"]!, en: description["en"]!)
+
+                                            let notification : [String: String] = try container.decode([String:String].self, forKey: .notification)
+                                            self.notification = LocalizedString(fr: notification["fr"]!, en: notification["en"]!)
+
+                                            let requiredCount : Int = try container.decode(Int.self, forKey: .required_count)
+                                            self.required_count = BadgeRequiredArgs(nbArtworks: requiredCount)
+
+                                            let optionalArgs : [String:String]? = try container.decodeIfPresent([String:String].self, forKey: .badgeable)
+                                            print("type is \(optionalArgs)")
+
+                                            if let optional = optionalArgs{
+                                                let badgeCategory = optional["type"]!
+                                                if badgeCategory == "Owner"{
+                                                    self.badgeType = .collectionBadges
+                                                    self.badgeable = BadgeOptionalArgs(borough: nil, category: nil, collection: optional["name"]!)
+                                                } else if badgeCategory == "Borough"{
+                                                    self.badgeType = .boroughBadge
+                                                    self.badgeable = BadgeOptionalArgs(borough: optional["name"]!, category: nil, collection: nil)
+                                                } else{
+                                                    self.badgeType = .categoryBadge
+                                                    self.badgeable = BadgeOptionalArgs(borough: nil, category: optional["name"]!, collection: nil)
+                                                }
+                                            } else{
+                                                self.badgeType = .generalBadge
+                                                self.badgeable = BadgeOptionalArgs(borough: nil, category: nil, collection: nil)
+                                                }
+                                        }
+                                        ....
+                                    }
+                            </code>
+                        </pre>
+                        <p class="card-text">Cela conclut bien la fonctionnalité de téléchargement de données du serveur. Il nous reste toujours un autre composant important, c'est de pouvoir mettre à jour les données. Cela demandera encore des efforts vu que l'API retournera les nouveaux objets ainsi que les
+                            objets dont les attributs ont été simplement modifiés. Donc, il nous faut bien vérifier quel type il s'agit. S'il s'agit bien d'un objet qui existe bien et dont les attributs sont modifiés, il faut bien modifier ces attributs pour que les données liées à cet objet ne sera pas couvert.
+                            Vu que la fin de trimestre s'approche, je vais malheureusement laisser l'implémentation de cette fonctionnalité pour plus tard. Heureusement, on ne s'attend pas à des ajouts majeurs de données dans la base de données de MONA pour l'instant</p>
+                    </div>
+                </section>
+                <section class="semaine-12 card" style="margin-top:10px;">
+                    <div class="card-body">
+                        <h4 class="card-title text-center">Semaine 12: 2023-04-10 ~ 2023-04-16</h4>
+                    </div>
+                </section>
                 <section class="semaine-13 card" style="margin-top:10px;">
                     <div class="card-body">
-                        <h4 class="card-title text-center">Semaine 13: 2023-04-17 ~ 2023-04-23 </h4>
+                        <h4 class="card-title text-center">Semaine 13: 2023-04-17 ~ 2023-04-23</h4>
                         <p class="card-text"></p>
                     </div>
                 </section>
