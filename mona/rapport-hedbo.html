@@ -694,6 +694,17 @@
                 <section class="semaine-12 card" style="margin-top:10px;">
                     <div class="card-body">
                         <h4 class="card-title text-center">Semaine 12: 2023-04-10 ~ 2023-04-16</h4>
+                        <p class="card-text">Ce mercredi, on a fait un test interne avec quelques testeurs. Ce test était vraiment utile parce qu'il a relevé bien des problèmes graves que je n'ai pas remarqués avant. Le problème le plus grave était le problème avec DailyWork qui entraîne de crash direct d'application.
+                            En analysant le log de crash, j'ai pu repérer l'erreur. En fait, cela a été une erreur de frappe qui s'est glissée dans le code. La façon dont la logique a été faite cause ce problème n'arrive que de façon
+                            occasionnelle. En fait, un <code>DailyWork</code> est de type <code>Artwork</code> quand le random se trouve entre 1 et 4, de type <code>Place</code> quand le random se trouve entre 5 et 9, et de type <code>Patrimoine</code> quand il se trouve entre 10 et 15.
+                            Dans le code, j'ai aussi une autre fonction qui va renvoyer le type de <code>DailyWork</code> selon le nombre de random. Toutefois, dans cette fonction, j'ai utilisé une répartition différente pour ces trois types. Cela cause que l'UI n'arrive pas à caster le <code>DailyWork</code> en le bon type, et
+                            c'est ce qui a causé le crash.
+                        </p>
+                        <p class="card-title text-center">Un usager, pendant le test interne d'aujourd'hui, a signalé que la couleur utilisée pour le texte dans l'écran d'inscription est très foncée qu'il ne puisse pas lire facilement. Donc, je l'ai bien modifié en blanc si l'usager utilise "Dark Mode" ou en noir sinon. Bien sûr, comme mentionné en haut, l'écran d'inscription doit être modifiée suite au design
+                        de Barbara</p>
+                        <p class="card-title text-center">Suite au test de Guy Lapalme, il nous a signalé des problèmes comme le filtre, le lien non-cliquable dans "À propos" etc. Vu que le filtre et l'écran d'inscription seront à modifier à la prochaine itération, je vais le laisser pour la prochaine itération.
+                        J'ai réglé le problème de lien non-cliquable en ajoutant des boutons cliquable à la fin de chaque paragraph pour que les usgaers puissent voir plus en détails dans leur navigateur. J'ai aussi essayé d'adapter le tutoriel aux iphones plus petit, ça devient un peu difficile et j'imagine qu'il faut refaire l'écran tutoriel
+                        en construisant dynamiquement le contenu de tutoriel au lieu d'utiliser les images. J'ai trouvé une solution temporaire: Utiliser des flèches pour des iphones plus petits pour qu'ils puissent toujours parcourir les images de tutoriel et quitter à la fin,</p>
                     </div>
                 </section>
                 <section class="semaine-13 card" style="margin-top:10px;">
